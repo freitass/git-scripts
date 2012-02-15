@@ -7,6 +7,7 @@
 # branches, and not development branches.
 
 # Reading flags.
+force=
 while getopts f name
 do
   case $name in
@@ -42,7 +43,7 @@ do
 done
 
 # If you plowed ahead above, print the branches which failed to checkout+merge
-if [ ( ! -z $force ) -a ( -n "$failed_merges" ) ]; then
+if [ -n $force -a -n "$failed_merges" ]; then
     echo "Failed merges: $failed_merges"
 fi
 
