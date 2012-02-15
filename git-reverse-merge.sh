@@ -42,7 +42,7 @@ fi
 for branch in "$@"
 do
   if ! ( git checkout $branch && git merge --no-ff $source_branch ); then
-    if [ -z $force ]
+    if [ -z "$force" ]
     then
       echo "Something went wrong for branch $branch"
       git checkout $source_branch
@@ -60,7 +60,7 @@ done
 git checkout $source_branch
 
 # If you plowed ahead above, print the branches which failed to checkout+merge.
-if [ -n $force -a -n "$failed_merges" ]; then
+if [ -n "$force" -a -n "$failed_merges" ]; then
     echo "Failed merges: $failed_merges"
 fi
 
