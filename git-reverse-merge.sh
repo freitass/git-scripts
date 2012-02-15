@@ -8,6 +8,7 @@
 
 # Get current branch as source.
 source_branch="$(git symbolic-ref HEAD 2>/dev/null)"
+source_branch=${source_branch##refs/heads/}
 
 # Assert we are not in a detached branch.
 if [ -z $source_branch ]
