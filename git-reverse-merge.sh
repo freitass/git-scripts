@@ -1,10 +1,28 @@
 #!/bin/bash
 
-# This script is based on Jefromi's answer on the following link:
-# http://stackoverflow.com/questions/2312387/git-is-there-a-quicker-way-to-merge-from-one-branch-to-multiple-branches-than-d
+# Name: Git reverse merge
 #
-# Also, he advises that this should be used only when merging into production
-# branches, and not development branches.
+# Brief: Merges from the current branch into the given branches.
+#
+# Flags:
+#
+#   f - If enabled, the script tries to merge into all branches and, at the end
+#       of the execution, prints the ones which failed; otherwise, stops at the
+#       first error.
+#
+# Arguments:
+#
+#   <branch>... - a list of branches into which the current branch will be merged.
+# 
+#
+# Acknowledgement:
+#
+#   This script is based on Jefromi's answer on the following link:
+#   <http://stackoverflow.com/questions/2312387/git-is-there-a-quicker-way-to-
+#   merge-from-one-branch-to-multiple-branches-than-d>
+#
+#   Also, he advises that this should be used only when merging into production
+#   branches and not into development branches.
 
 # Get current branch as source.
 source_branch="$(git symbolic-ref HEAD 2>/dev/null)"
