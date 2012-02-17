@@ -6,9 +6,12 @@
 #
 # Flags:
 #
+#   a - Enabling this flag has the same effect as specifying all local branches
+#   other than the source (current one).
+#
 #   f - If enabled, the script tries to merge into all branches and, at the end
-#       of the execution, prints the ones which failed; otherwise, stops at the
-#       first error.
+#   of the execution, prints the ones which failed; otherwise, stops at the
+#   first error.
 #
 # Arguments:
 #
@@ -28,19 +31,33 @@
 source_branch="$(git symbolic-ref HEAD 2>/dev/null)"
 source_branch=${source_branch##refs/heads/}
 
+# Branches to merge into.
+target_branches=
+
+force=
+all=
+
+function usage()
+{
+  echo "Usage:"
+  echo "    $0 [-f] <target_branch>..."
+  echo "    $0 [-f] -a"
+  return 0
+}
+
 # Assert we are not in a detached branch.
 if [ -z $source_branch ]
 then
   echo "It is not possible to merge from a detached branch"
-  echo "Stopping"
+  echo
   exit 2
 fi
 
 # Reading flags.
-force=
-while getopts f name
+while getopts af name
 do
   case $name in
+    a) all=1;;
     f) force=1;;
   esac
 done
@@ -48,23 +65,38 @@ done
 # Discarding flags from arguments.
 shift $(($OPTIND - 1))
 
-# Assert at least one branch was specified.
-if [ $# -lt 1 ]
+if [ -n "$all" ]
 then
-  echo "No branch specified"
+  if [ $# -ne 0 ]
+  then
+    echo "Cannot specify a branch with '-a'"
+    echo
+    usage
+    exit 2
+  fi
+
+  # Get all target branches.
+  target_branches=$(git branch)
+  target_branches=${target_branches/* $source_branch}
+else
+  target_branches="$@"
+fi
+
+if [ -z "$target_branches" ]
+then
+  echo "Please, specify a target branch"
   echo
-  echo "Usage: $0 [-f] <branch>..."
+  usage
   exit 2
 fi
 
-for branch in "$@"
+for branch in "$target_branches"
 do
   if ! ( git checkout $branch && git merge --no-ff $source_branch ); then
     if [ -z "$force" ]
     then
       echo "Something went wrong for branch $branch"
       git checkout $source_branch
-      echo "Stopping"
       exit 2
     else
       # Restoring current branch and remember it for later.
