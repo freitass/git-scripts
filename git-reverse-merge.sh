@@ -13,6 +13,8 @@
 #   of the execution, prints the ones which failed; otherwise, stops at the
 #   first error.
 #
+#   h - Prints usage information.
+#
 # Arguments:
 #
 #   <branch>... - a list of branches into which the current branch will be merged.
@@ -34,8 +36,9 @@ source_branch=${source_branch##refs/heads/}
 # Branches to merge into.
 target_branches=
 
-force=
 all=
+force=
+usage=
 
 function usage()
 {
@@ -45,6 +48,23 @@ function usage()
   return 0
 }
 
+# Reading flags.
+while getopts afh name
+do
+  case $name in
+    a) all=1;;
+    f) force=1;;
+    h) usage=1;;
+  esac
+done
+
+# Print usage and exit.
+if [ -n "$usage" ]
+then
+  usage
+  exit 0
+fi
+
 # Assert we are not in a detached branch.
 if [ -z $source_branch ]
 then
@@ -52,15 +72,6 @@ then
   echo
   exit 2
 fi
-
-# Reading flags.
-while getopts af name
-do
-  case $name in
-    a) all=1;;
-    f) force=1;;
-  esac
-done
 
 # Discarding flags from arguments.
 shift $(($OPTIND - 1))
