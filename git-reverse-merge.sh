@@ -88,7 +88,7 @@ then
 
   # Get all target branches.
   target_branches=$(git branch)
-  target_branches=${target_branches/* $source_branch}
+  target_branches=${target_branches/\* $source_branch}
 else
   target_branches="$@"
 fi
@@ -101,7 +101,7 @@ then
   exit 2
 fi
 
-for branch in "$target_branches"
+for branch in $target_branches
 do
   if ! ( git checkout $branch && git merge --no-ff $source_branch ); then
     if [ -z "$force" ]
