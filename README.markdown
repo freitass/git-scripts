@@ -1,6 +1,6 @@
 # Git Scripts
 
-A set of scripts (currently a single one) to perform laborious git tasks.
+A set of scripts to perform laborious git tasks.
 
 ## About
 
